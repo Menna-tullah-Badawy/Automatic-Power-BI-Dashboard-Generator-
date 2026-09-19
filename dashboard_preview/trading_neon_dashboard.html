@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Neon Green</title>
+    <title>Luxury Gold Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -17,16 +17,16 @@
             --gold-primary: #00FF88;
             --gold-light: #10B981;
             --gold-dark: #065F46;
-            --bg-main: #030712;
+            --gold-glow: rgba(232, 184, 96, 0.15);
+            --bg-main: linear-gradient(135deg, #2c2824 0%, #1a1816 100%);
             --bg-card: #111827;
             --bg-sidebar: #020617;
             --text-main: #ECFDF5;
             --text-muted: #6EE7B7;
-            --gold-glow: rgba(232, 184, 96, 0.15);
         }
 
         body {
-            background: linear-gradient(135deg, #2c2824 0%, #1a1816 100%);
+            background: var(--bg-main);
             min-height: 100vh;
             padding: 30px;
             display: flex;
@@ -40,13 +40,13 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 35px 80px rgba(0,0,0,0.6);
-            background: var(--bg-main);
+            background: #030712;
             display: flex;
             position: relative;
             border: 1px solid rgba(232, 184, 96, 0.1);
         }
 
-        /* Sidebar EXACT match to reference */
+        /* Sidebar */
         .sidebar {
             width: 90px;
             background: var(--bg-sidebar);
@@ -54,7 +54,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
             border-right: 1px solid rgba(232, 184, 96, 0.08);
         }
 
@@ -65,32 +65,47 @@
             border-radius: 50%;
             margin-bottom: 30px;
             box-shadow: 0 0 20px rgba(232, 184, 96, 0.4);
-        }
-
-        .nav-dot {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: rgba(232, 184, 96, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--gold-primary);
-            font-size: 18px;
+        }
+
+        .nav-item {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(232, 184, 96, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
             cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid transparent;
+            padding: 10px;
         }
 
-        .nav-dot.active {
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nav-item.active {
             background: var(--gold-primary);
             color: #020617;
             box-shadow: 0 0 15px rgba(232, 184, 96, 0.5);
             border-color: var(--gold-light);
         }
+        .nav-item.active svg { stroke: #020617; }
 
-        .nav-dot:hover {
+        .nav-item:hover {
             background: rgba(232, 184, 96, 0.2);
+            color: var(--gold-primary);
         }
 
         .profile-avatar-small {
@@ -99,14 +114,29 @@
             border-radius: 50%;
             border: 2px solid var(--gold-primary);
             margin-top: auto;
-            background: url('https://picsum.photos/id/64/100/100') center/cover;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
             box-shadow: 0 0 12px rgba(232, 184, 96, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #020617;
+            font-weight: 600;
         }
 
-        /* Main Content */
+        /* Pages */
         .main-content {
             flex: 1;
             padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+        }
+
+        .page {
+            grid-column: span 3;
+            display: none;
+        }
+        .page.active {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 18px;
@@ -118,6 +148,12 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 5px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            color: var(--gold-light);
+            font-weight: 600;
         }
 
         .top-bar-icons {
@@ -137,14 +173,20 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
-
+        .icon-btn svg {
+            width: 18px;
+            height:18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width:2;
+        }
         .icon-btn.active-toggle {
             background: var(--gold-primary);
             color: #020617;
         }
 
-        /* Card styling EXACT match */
         .card {
             background: var(--bg-card);
             border-radius: 14px;
@@ -166,22 +208,11 @@
             opacity: 0.3;
         }
 
-        .card-tall-left {
-            grid-row: span 2;
-        }
+        .card-tall-left { grid-row: span 2; }
+        .card-wider { grid-column: span 2; }
+        .card-full { grid-column: span 3; }
 
-        .card-wider {
-            grid-column: span 2;
-        }
-
-        .card-full {
-            grid-column: span 3;
-        }
-
-        /* Clock/Circle top left card */
-        .clock-card {
-            text-align: center;
-        }
+        .clock-card { text-align: center; }
         .clock-gauge {
             width: 180px;
             height: 180px;
@@ -248,16 +279,13 @@
             box-shadow: 0 0 10px var(--gold-primary);
         }
 
-        /* Top stats card */
         .stats-top-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             grid-column: span 2;
         }
-        .big-number-card {
-            padding: 20px;
-        }
+        .big-number-card { padding: 20px; }
         .big-number-label {
             font-size: 13px;
             color: var(--text-muted);
@@ -279,14 +307,6 @@
             border-radius: 8px;
             position: relative;
         }
-        .mini-chart-line::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left:0; right:0;
-            height: 2px;
-            background: var(--gold-primary);
-        }
         .dot-indicator {
             position: absolute;
             width: 14px;
@@ -297,13 +317,7 @@
             top: 10px;
             right: 20px;
         }
-        .stat-divider {
-            width: 1px;
-            background: linear-gradient(180deg, transparent, var(--gold-primary), transparent);
-            opacity: 0.2;
-        }
 
-        /* Bar Chart */
         .bar-chart-container {
             display: flex;
             gap: 10px;
@@ -377,18 +391,13 @@
             box-shadow: 0 0 10px var(--gold-primary);
         }
 
-        /* Map card */
-        .map-card {
-            position: relative;
-            overflow: hidden;
-        }
+        .map-card { position: relative; overflow: hidden; }
         .world-map {
             width: 100%;
             height: 200px;
-            background: url('https://picsum.photos/id/101/600/300') center/cover;
-            opacity: 0.3;
+            background: linear-gradient(135deg, rgba(232,184,96,0.05), rgba(232,184,96,0.15)), 
+                        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400' fill='%23E8B860' opacity='0.15'%3E%3Cpath d='M150,120 Q200,80 280,100 T400,90 T550,120 T700,100 L700,280 Q600,320 450,300 T250,310 T100,280 Z'/%3E%3C/svg%3E");
             border-radius: 10px;
-            filter: sepia(1) hue-rotate(10deg) saturate(0.7);
         }
         .map-dot {
             position: absolute;
@@ -408,17 +417,7 @@
             width: 30px;
             height:30px;
         }
-        .plant-deco {
-            position: absolute;
-            right: 10px;
-            bottom: 0;
-            width: 120px;
-            height: 180px;
-            background: linear-gradient(180deg, transparent, rgba(132, 204, 22, 0.15));
-            opacity: 0.4;
-        }
 
-        /* List items */
         .mini-list {
             display: flex;
             flex-direction: column;
@@ -443,6 +442,13 @@
             justify-content: center;
             font-size: 14px;
         }
+        .mini-icon svg {
+            width: 16px;
+            height:16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width:2;
+        }
         .mini-list-text {
             flex: 1;
             font-size: 13px;
@@ -454,10 +460,7 @@
             font-size: 13px;
         }
 
-        /* Progress bars */
-        .progress-item {
-            margin-bottom: 15px;
-        }
+        .progress-item { margin-bottom: 15px; }
         .progress-label {
             display: flex;
             justify-content: space-between;
@@ -478,7 +481,6 @@
             box-shadow: 0 0 10px rgba(232, 184, 96, 0.3);
         }
 
-        /* Table card */
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -520,323 +522,379 @@
             cursor: pointer;
             margin-right: 4px;
         }
+        .action-btn svg { width: 14px; height:14px; stroke: currentColor; fill: none; stroke-width:2; }
+
+        .full-page-center {
+            grid-column: span 3;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .page-icon {
+            width: 100px;
+            height:100px;
+            border-radius: 50%;
+            background: rgba(232,184,96,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--gold-primary);
+        }
+        .page-icon svg { width: 50px; height:50px; stroke: currentColor; fill: none; stroke-width:1.5; }
+        .page-title-huge { font-size: 32px; color: var(--gold-light); margin-bottom: 10px; font-weight: 300; }
+        .page-desc { color: var(--text-muted); font-size: 15px; max-width: 500px; }
     </style>
 </head>
 <body>
     <div class="dashboard-window">
-        <!-- Sidebar exact match -->
+        <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-logo"></div>
-            <div class="nav-dot active">🏠</div>
-            <div class="nav-dot">👤</div>
-            <div class="nav-dot">📊</div>
-            <div class="nav-dot">📁</div>
-            <div class="nav-dot">📋</div>
-            <div class="nav-dot">💬</div>
-            <div class="nav-dot">⚙️</div>
-            <div class="nav-dot">🔔</div>
-            <div class="profile-avatar-small"></div>
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 24 24" fill="#020617"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            
+            <!-- Navigation items with proper SVG icons -->
+            <div class="nav-item active" data-page="dashboard">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            </div>
+            <div class="nav-item" data-page="analytics">
+                <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+            </div>
+            <div class="nav-item" data-page="customers">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="nav-item" data-page="products">
+                <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <div class="nav-item" data-page="map">
+                <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            </div>
+            <div class="nav-item" data-page="orders">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div class="nav-item" data-page="messages">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="nav-item" data-page="settings">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <div class="nav-item" data-page="notifications">
+                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+
+            <div class="profile-avatar-small">A</div>
         </div>
 
-        <!-- Main content grid exact layout match -->
+        <!-- Main Content with pages -->
         <div class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <div style="display: flex; gap:15px; align-items: center;">
-                    <div class="icon-btn">☰</div>
-                    <div class="icon-btn">👁️</div>
-                    <div class="icon-btn">⏱️</div>
-                    <div style="width: 200px; height:6px; background: rgba(232, 184, 96, 0.15); border-radius: 3px;"></div>
-                    <span style="color: var(--text-muted); font-size:12px;">81%</span>
-                </div>
-                <div class="top-bar-icons">
-                    <div class="icon-btn">🔍</div>
-                    <div class="icon-btn">🔍</div>
-                    <div class="icon-btn active-toggle">🌙</div>
-                </div>
-            </div>
-
-            <!-- Top Left Tall Card: Clock/Gauge -->
-            <div class="card card-tall-left clock-card">
-                <div style="color: var(--gold-primary); font-size: 14px; text-align: left; margin-bottom: 10px;">Kolekcjonery</div>
-                <div class="clock-gauge">
-                    <div class="clock-marker top"></div>
-                    <div class="clock-marker right"></div>
-                    <div class="clock-marker bottom"></div>
-                    <div class="clock-marker left"></div>
-                    <div class="clock-center-glow"></div>
-                    <div class="clock-value">7643</div>
-                    <div style="position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--text-muted)">01/10</div>
-                </div>
-                <div style="font-size: 12px; color: var(--text-muted); text-align: left; margin-top:5px;">Dane z systemu</div>
-                <div class="card-slider">
-                    <div class="card-slider-fill">
-                        <div class="slider-dot"></div>
-                    </div>
-                </div>
-                <div style="text-align: right; margin-top:8px;"><div class="icon-btn" style="display:inline-flex;">↗</div></div>
-
-                <div style="margin-top:25px; text-align:left;">
-                    <div style="color: var(--gold-primary); font-size:14px; margin-bottom: 15px;">Dane systemowe</div>
-                    <div class="mini-list">
-                        <div class="mini-list-item">
-                            <div class="mini-icon">📁</div>
-                            <div class="mini-list-text">System files</div>
+            <!-- Dashboard Page (main) -->
+            <div class="page active" id="dashboard-page">
+                <div class="top-bar">
+                    <div class="page-title">Dashboard Overview</div>
+                    <div class="top-bar-icons">
+                        <div class="icon-btn">
+                            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         </div>
-                        <div class="mini-list-item">
-                            <div class="mini-icon">🖥️</div>
-                            <div class="mini-list-text">System status</div>
+                        <div class="icon-btn">
+                            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </div>
-                        <div class="mini-list-item">
-                            <div class="mini-icon">🔄</div>
-                            <div class="mini-list-text">Last update</div>
-                        </div>
-                        <div class="mini-list-item">
-                            <div class="mini-icon">📊</div>
-                            <div class="mini-list-text">Analytics data</div>
+                        <div class="icon-btn active-toggle">
+                            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- Small line chart at bottom -->
-                <div style="margin-top:25px;">
-                    <div style="font-size:12px; color: var(--text-muted); margin-bottom:10px;">Trend</div>
-                    <canvas id="mini-trend" height="70"></canvas>
-                </div>
-            </div>
+                <!-- Left Tall Clock Card -->
+                <div class="card card-tall-left clock-card">
+                    <div style="color: var(--gold-primary); font-size: 14px; text-align: left; margin-bottom: 10px;">System Metrics</div>
+                    <div class="clock-gauge">
+                        <div class="clock-marker top"></div>
+                        <div class="clock-marker right"></div>
+                        <div class="clock-marker bottom"></div>
+                        <div class="clock-marker left"></div>
+                        <div class="clock-center-glow"></div>
+                        <div class="clock-value">7643</div>
+                        <div style="position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--text-muted)">01/10</div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted); text-align: left; margin-top:5px;">Live data reading</div>
+                    <div class="card-slider">
+                        <div class="card-slider-fill"><div class="slider-dot"></div></div>
+                    </div>
 
-            <!-- Top Stats 2 cards -->
-            <div class="stats-top-row">
-                <div class="card big-number-card">
-                    <div class="big-number-label">Bieżąca wartość</div>
-                    <div style="display: flex; align-items:center; gap: 20px;">
-                        <div class="big-number">1025/3</div>
-                        <div class="mini-chart-line" style="flex:1;">
-                            <div class="dot-indicator"></div>
-                        </div>
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted); margin-top:8px;">Średnia wartość: 19876.54</div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--text-muted);">
-                        <span>Min 3.02</span>
-                        <span>Max 198.3</span>
-                    </div>
-                </div>
-                <div class="card big-number-card">
-                    <div class="big-number-label">Wartość średnia</div>
-                    <div style="display: flex; align-items:center; gap: 20px;">
-                        <div class="big-number">19.8/3</div>
-                        <div style="width: 80px; height: 60px;">
-                            <canvas id="mini-donut" width="80" height="60"></canvas>
-                        </div>
-                    </div>
-                    <!-- Vertical bars -->
-                    <div style="display: flex; gap: 12px; margin-top:15px; align-items: end; height: 70px;">
-                        <div class="bar" style="height:40%"></div>
-                        <div class="bar" style="height:75%"></div>
-                        <div class="bar" style="height:55%"></div>
-                        <div class="bar" style="height:90%"></div>
-                        <div class="bar" style="height:65%"></div>
-                        <div class="bar" style="height:85%"></div>
-                        <div class="bar thin" style="height:40%"></div>
-                        <div class="bar thin" style="height:60%"></div>
-                        <div class="bar thin" style="height:30%"></div>
-                        <div class="bar thin" style="height:55%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Map Card -->
-            <div class="card map-card">
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div style="font-size:14px; color: var(--gold-primary);">Mapa</div>
-                    <div style="display:flex; gap:10px;">
-                        <div class="icon-btn" style="width:28px; height:28px; font-size: 12px;">A</div>
-                        <div class="icon-btn" style="width:28px; height:28px; font-size: 12px;">✦</div>
-                    </div>
-                </div>
-                <div class="world-map"></div>
-                <div class="map-dot large" style="top:40px; right:80px;">A</div>
-                <div class="map-dot" style="top:100px; left:100px;">09</div>
-                <div class="plant-deco"></div>
-            </div>
-
-            <!-- Middle Row: Gauge + Progress bars -->
-            <div class="card">
-                <div style="text-align: center;">
-                    <div class="gauge-circle">
-                        <div class="gauge-ring">
-                            <div class="gauge-fill"></div>
-                            <div class="gauge-value">3.320°</div>
-                            <div class="gauge-badge">N</div>
-                        </div>
-                    </div>
-                    <div class="gauge-subtext">Aktualna wartość</div>
-                    <div style="margin-top:20px; display:flex; justify-content: space-around; font-size:11px; color: var(--text-muted);">
-                        <span>MIN: 0.00</span>
-                        <span style="color: var(--gold-primary)">ŚR: 3.219</span>
-                        <span>MAX: 5.000</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats card with numbers -->
-            <div class="card">
-                <div style="font-size:14px; color: var(--gold-primary); margin-bottom:15px;">Statystyki</div>
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>Średnia</span>
-                        <span>6%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>Mediana</span>
-                        <span>0.18</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 35%"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>Odchylenie</span>
-                        <span>5.85</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 75%"></div>
-                    </div>
-                </div>
-                <div class="mini-list" style="margin-top:20px;">
-                    <div class="mini-list-item">
-                        <div class="mini-list-text">Zarejestrowane</div>
-                        <div class="mini-list-value">5 696 193</div>
-                    </div>
-                    <div class="mini-list-item">
-                        <div class="mini-list-text">Aktywne</div>
-                        <div class="mini-list-value">650 690</div>
-                    </div>
-                    <div class="mini-list-item">
-                        <div class="mini-list-text">Ukończone</div>
-                        <div class="mini-list-value">4 033 311</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Row: Line Chart + Map2 + Stats -->
-            <div class="card card-wider">
-                <div style="display:flex; justify-content: space-between; margin-bottom:15px;">
-                    <div style="font-size:14px; color: var(--gold-primary);">Historia pomiarów</div>
-                    <div style="display:flex; gap: 15px; align-items:center;">
-                        <span class="badge-status">Aktywne</span>
-                        <div class="icon-btn" style="width:28px; height:28px;">📅</div>
-                        <div class="icon-btn" style="width:28px; height:28px;">⏱️</div>
-                        <div class="icon-btn" style="width:28px; height:28px;">📊</div>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                    <div>
-                        <div style="margin-bottom: 10px; display:flex; gap:20px;">
-                            <div style="color:var(--gold-primary); font-size:18px; font-weight: 500;">6%</div>
-                            <div style="color:var(--text-muted); font-size:12px;">Wzrost wartości</div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                            <div>
-                                <div style="color:var(--text-muted); font-size:11px;">Średnia</div>
-                                <div style="color: var(--gold-primary); font-weight:500;">5.676</div>
+                    <div style="margin-top:25px; text-align:left;">
+                        <div style="color: var(--gold-primary); font-size:14px; margin-bottom: 15px;">System Status</div>
+                        <div class="mini-list">
+                            <div class="mini-list-item">
+                                <div class="mini-icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+                                <div class="mini-list-text">System files</div>
                             </div>
-                            <div>
-                                <div style="color:var(--text-muted); font-size:11px;">Min</div>
-                                <div style="color: var(--gold-primary); font-weight:500;">7.010</div>
+                            <div class="mini-list-item">
+                                <div class="mini-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                                <div class="mini-list-text">System status</div>
                             </div>
-                            <div>
-                                <div style="color:var(--text-muted); font-size:11px;">Max</div>
-                                <div style="color: var(--gold-primary); font-weight:500;">0.010</div>
+                            <div class="mini-list-item">
+                                <div class="mini-icon"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+                                <div class="mini-list-text">Last update</div>
+                            </div>
+                            <div class="mini-list-item">
+                                <div class="mini-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                                <div class="mini-list-text">Analytics data</div>
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <canvas id="history-line" height="120"></canvas>
+
+                    <div style="margin-top:25px;">
+                        <div style="font-size:12px; color: var(--text-muted); margin-bottom:10px;">Performance Trend</div>
+                        <canvas id="mini-trend" height="70"></canvas>
                     </div>
                 </div>
-                <!-- Data Table -->
-                <table class="data-table" style="margin-top:20px;">
-                    <thead>
-                        <tr>
-                            <th>LP</th>
-                            <th>NUMER</th>
-                            <th>OPIS</th>
-                            <th>WARTOSĆ</th>
-                            <th>STAN</th>
-                            <th>AKCJE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>01</td>
-                            <td>#45271</td>
-                            <td>Pomiar podstawowy</td>
-                            <td>$ 6954.00</td>
-                            <td><span class="badge-status">Aktywny</span></td>
-                            <td><button class="action-btn">✏️</button></td>
-                        </tr>
-                        <tr>
-                            <td>02</td>
-                            <td>#45272</td>
-                            <td>System update</td>
-                            <td>$ 8056.20</td>
-                            <td><span class="badge-status">Gotowy</span></td>
-                            <td><button class="action-btn">✏️</button></td>
-                        </tr>
-                        <tr>
-                            <td>03</td>
-                            <td>#45273</td>
-                            <td>Analiza danych</td>
-                            <td>$ 3200.00</td>
-                            <td><span class="badge-status">W trakcie</span></td>
-                            <td><button class="action-btn">✏️</button></td>
-                        </tr>
-                        <tr>
-                            <td>04</td>
-                            <td>#45274</td>
-                            <td>Raport miesięczny</td>
-                            <td>$ 10 200.00</td>
-                            <td><span class="badge-status">Zakończony</span></td>
-                            <td><button class="action-btn">✏️</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                <!-- Top Stats -->
+                <div class="stats-top-row">
+                    <div class="card big-number-card">
+                        <div class="big-number-label">Current Value</div>
+                        <div style="display: flex; align-items:center; gap: 20px;">
+                            <div class="big-number">1025/3</div>
+                            <div class="mini-chart-line" style="flex:1;"><div class="dot-indicator"></div></div>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top:8px;">Average: 19876.54</div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--text-muted);">
+                            <span>Min 3.02</span>
+                            <span>Max 198.3</span>
+                        </div>
+                    </div>
+                    <div class="card big-number-card">
+                        <div class="big-number-label">Average Value</div>
+                        <div style="display: flex; align-items:center; gap: 20px;">
+                            <div class="big-number">19.8/3</div>
+                            <div style="width: 80px; height: 60px;">
+                                <canvas id="mini-donut" width="80" height="60"></canvas>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top:15px; align-items: end; height: 70px;">
+                            <div class="bar" style="height:40%"></div>
+                            <div class="bar" style="height:75%"></div>
+                            <div class="bar" style="height:55%"></div>
+                            <div class="bar" style="height:90%"></div>
+                            <div class="bar" style="height:65%"></div>
+                            <div class="bar" style="height:85%"></div>
+                            <div class="bar thin" style="height:40%"></div>
+                            <div class="bar thin" style="height:60%"></div>
+                            <div class="bar thin" style="height:30%"></div>
+                            <div class="bar thin" style="height:55%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div class="card map-card">
+                    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="font-size:14px; color: var(--gold-primary);">Live Map</div>
+                    </div>
+                    <div class="world-map"></div>
+                    <div class="map-dot large" style="top:40px; right:80px;">A</div>
+                    <div class="map-dot" style="top:100px; left:100px;">09</div>
+                </div>
+
+                <!-- Gauge -->
+                <div class="card">
+                    <div style="text-align: center;">
+                        <div class="gauge-circle">
+                            <div class="gauge-ring">
+                                <div class="gauge-fill"></div>
+                                <div class="gauge-value">3.320°</div>
+                                <div class="gauge-badge">N</div>
+                            </div>
+                        </div>
+                        <div class="gauge-subtext">Current reading</div>
+                        <div style="margin-top:20px; display:flex; justify-content: space-around; font-size:11px; color: var(--text-muted);">
+                            <span>MIN: 0.00</span>
+                            <span style="color: var(--gold-primary)">AVG: 3.219</span>
+                            <span>MAX: 5.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="card">
+                    <div style="font-size:14px; color: var(--gold-primary); margin-bottom:15px;">Statistics</div>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Average</span><span>6%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Median</span><span>0.18</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 35%"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Deviation</span><span>5.85</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                    </div>
+                    <div class="mini-list" style="margin-top:20px;">
+                        <div class="mini-list-item">
+                            <div class="mini-list-text">Registered</div>
+                            <div class="mini-list-value">5 696 193</div>
+                        </div>
+                        <div class="mini-list-item">
+                            <div class="mini-list-text">Active</div>
+                            <div class="mini-list-value">650 690</div>
+                        </div>
+                        <div class="mini-list-item">
+                            <div class="mini-list-text">Completed</div>
+                            <div class="mini-list-value">4 033 311</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History + Table -->
+                <div class="card card-wider">
+                    <div style="display:flex; justify-content: space-between; margin-bottom:15px;">
+                        <div style="font-size:14px; color: var(--gold-primary);">Measurement History</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                        <div>
+                            <div style="margin-bottom: 10px; display:flex; gap:20px;">
+                                <div style="color:var(--gold-primary); font-size:18px; font-weight: 500;">6%</div>
+                                <div style="color:var(--text-muted); font-size:12px;">Value increase</div>
+                            </div>
+                        </div>
+                        <div><canvas id="history-line" height="120"></canvas></div>
+                    </div>
+                    <table class="data-table" style="margin-top:20px;">
+                        <thead><tr><th>ID</th><th>Number</th><th>Description</th><th>Value</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr><td>01</td><td>#45271</td><td>Base measurement</td><td>$ 6954.00</td><td><span class="badge-status">Active</span></td><td><button class="action-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td></tr>
+                            <tr><td>02</td><td>#45272</td><td>System update</td><td>$ 8056.20</td><td><span class="badge-status">Ready</span></td><td><button class="action-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td></tr>
+                            <tr><td>03</td><td>#45273</td><td>Data analysis</td><td>$ 3200.00</td><td><span class="badge-status">In progress</span></td><td><button class="action-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td></tr>
+                            <tr><td>04</td><td>#45274</td><td>Monthly report</td><td>$ 10 200.00</td><td><span class="badge-status">Completed</span></td><td><button class="action-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Region stats -->
+                <div class="card">
+                    <div style="font-size:14px; color: var(--gold-primary); margin-bottom:15px;">Locations</div>
+                    <div style="height:120px; background: linear-gradient(135deg, rgba(232,184,96,0.05), rgba(232,184,96,0.15)), url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 400%22 fill=%22%23E8B860%22 opacity=%220.15%22%3E%3Cpath d=%22M150,120 Q200,80 280,100 T400,90 T550,120 T700,100 L700,280 Q600,320 450,300 T250,310 T100,280 Z%22/%3E%3C/svg%3E'); border-radius:10px;"></div>
+                    <div class="progress-item" style="margin-top:20px;">
+                        <div class="progress-label"><span>Region 1</span><span>60%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Region 2</span><span>35%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Map 2 small -->
-            <div class="card">
-                <div style="font-size:14px; color: var(--gold-primary); margin-bottom:15px;">Lokalizacja</div>
-                <div style="height:120px; background: url('https://picsum.photos/id/101/600/300') center/cover; opacity:0.3; border-radius: 10px; filter: sepia(1) hue-rotate(10deg);"></div>
-                <div class="progress-item" style="margin-top: 20px;">
-                    <div class="progress-label">
-                        <span>Region 1</span>
-                        <span>60%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width:60%"></div>
-                    </div>
+            <!-- Other pages placeholder -->
+            <div class="page" id="analytics-page">
+                <div class="top-bar">
+                    <div class="page-title">Analytics</div>
                 </div>
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>Region 2</span>
-                        <span>35%</span>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width:35%"></div>
+                    <div class="page-title-huge">Analytics Page</div>
+                    <div class="page-desc">Detailed charts and reports for your data trends and performance metrics are shown here. This page is fully interactive.</div>
+                </div>
+            </div>
+            <div class="page" id="customers-page">
+                <div class="top-bar"><div class="page-title">Customers</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                     </div>
+                    <div class="page-title-huge">Customers Directory</div>
+                    <div class="page-desc">Full customer list, profiles, purchase history and customer segmentation will appear here.</div>
+                </div>
+            </div>
+            <div class="page" id="products-page">
+                <div class="top-bar"><div class="page-title">Products</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <div class="page-title-huge">Products Inventory</div>
+                    <div class="page-desc">Product catalog, stock levels, pricing and performance metrics for all your products.</div>
+                </div>
+            </div>
+            <div class="page" id="map-page">
+                <div class="top-bar"><div class="page-title">Geographic Map</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>
+                    </div>
+                    <div class="page-title-huge">Geographic Distribution</div>
+                    <div class="page-desc">Interactive full screen map showing sales and metrics by region and city.</div>
+                </div>
+            </div>
+            <div class="page" id="orders-page">
+                <div class="top-bar"><div class="page-title">Orders</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                    </div>
+                    <div class="page-title-huge">Orders Management</div>
+                    <div class="page-desc">Full order table, order status tracking, invoices and order details.</div>
+                </div>
+            </div>
+            <div class="page" id="messages-page">
+                <div class="top-bar"><div class="page-title">Messages</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="page-title-huge">Messages Center</div>
+                    <div class="page-desc">Internal communications, alerts and notifications from the system.</div>
+                </div>
+            </div>
+            <div class="page" id="settings-page">
+                <div class="top-bar"><div class="page-title">Settings</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <div class="page-title-huge">System Settings</div>
+                    <div class="page-desc">Dashboard configuration, theme settings, user permissions and data connections.</div>
+                </div>
+            </div>
+            <div class="page" id="notifications-page">
+                <div class="top-bar"><div class="page-title">Notifications</div></div>
+                <div class="full-page-center card-full">
+                    <div class="page-icon">
+                        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+                    </div>
+                    <div class="page-title-huge">Notifications</div>
+                    <div class="page-desc">System alerts, updates, and important notifications for your dashboard.</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active from all
+                navItems.forEach(n => n.classList.remove('active'));
+                pages.forEach(p => p.classList.remove('active'));
+                
+                // Activate selected
+                item.classList.add('active');
+                const pageId = item.getAttribute('data-page') + '-page';
+                document.getElementById(pageId).classList.add('active');
+            });
+        });
+
+        // Charts
         Chart.defaults.color = '#6EE7B7';
         Chart.defaults.borderColor = 'rgba(232, 184, 96, 0.1)';
 
