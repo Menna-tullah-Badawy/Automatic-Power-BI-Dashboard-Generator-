@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Generated Power BI Dashboard - Luxury Gold Theme</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #D4AF37;
+            --secondary: #F2C96E;
+            --accent: #A67C00;
+            --neutral: #9CA3AF;
+            --bg-dark: #1C1917;
+            --bg-card: #292524;
+            --text-light: #FEF3C7;
+            --text-muted: #D6D3D1;
+            --success: #84CC16;
+            --warning: #F97316;
+            --danger: #DC2626;
+            --border-gold: rgba(212, 175, 55, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Sidebar */
+        .app-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px 16px;
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            border: 1px solid var(--border-gold);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.2), transparent);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .nav-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--secondary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border-gold);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-gold);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .kpi-label {
+            font-size: 13px;
+            color: var(--neutral);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .kpi-growth {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .growth-positive { color: var(--success); }
+        .growth-negative { color: var(--danger); }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-gold);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .chart-card.wide {
+            grid-column: span 2;
+        }
+
+        .chart-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Filters */
+        .filters-panel {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-gold);
+            margin-bottom: 10px;
+        }
+
+        .filters-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-gold);
+            color: var(--text-light);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-gold);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-completed { background: rgba(132, 204, 22, 0.15); color: var(--success); }
+        .status-processing { background: rgba(249, 115, 22, 0.15); color: var(--warning); }
+        .status-cancelled { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
+        .status-returned { background: rgba(156, 163, 175, 0.15); color: var(--neutral); }
+
+        @media (max-width: 1200px) {
+            .app-container { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .chart-card.wide { grid-column: span 1; }
+            .chart-row-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">LUXURY<br>DASHBOARD</div>
+            <div class="nav-item active">
+                <span>📊</span> Dashboard
+            </div>
+            <div class="nav-item">
+                <span>📈</span> Sales Analytics
+            </div>
+            <div class="nav-item">
+                <span>👥</span> Customers
+            </div>
+            <div class="nav-item">
+                <span>📦</span> Products
+            </div>
+            <div class="nav-item">
+                <span>🗺️</span> Locations
+            </div>
+            <div class="nav-item">
+                <span>📋</span> Orders
+            </div>
+            <div class="nav-item">
+                <span>⚙️</span> Settings
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="page-title">Sales Dashboard</div>
+                <div class="profile-badge">
+                    <div class="profile-avatar">A</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600;">Admin User</div>
+                        <div style="font-size: 11px; color: var(--neutral);">Luxury Gold Theme</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-panel">
+                <div class="filters-title">🔍 Filters</div>
+                <div class="filters-row">
+                    <select id="filter-category">
+                        <option value="">All Categories</option>
+                        <option>Electronics</option>
+                        <option>Clothing</option>
+                        <option>Furniture</option>
+                        <option>Beauty</option>
+                        <option>Food</option>
+                        <option>Books</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="">All Status</option>
+                        <option>Completed</option>
+                        <option>Processing</option>
+                        <option>Cancelled</option>
+                        <option>Returned</option>
+                    </select>
+                    <select id="filter-payment">
+                        <option value="">All Payment Methods</option>
+                        <option>Cash</option>
+                        <option>Credit Card</option>
+                        <option>Digital Wallet</option>
+                        <option>Bank Transfer</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Orders</div>
+                    <div class="kpi-value" id="kpi-orders">2,000</div>
+                    <div class="kpi-growth growth-positive">↑ 12.3% from last month</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Sales</div>
+                    <div class="kpi-value" id="kpi-sales">$27.8M</div>
+                    <div class="kpi-growth growth-negative">↓ -1.6% vs previous period</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Profit</div>
+                    <div class="kpi-value" id="kpi-profit">$8.4M</div>
+                    <div class="kpi-growth growth-negative">↓ -4.7% vs previous period</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Quantity Sold</div>
+                    <div class="kpi-value" id="kpi-qty">10,968</div>
+                    <div class="kpi-growth growth-positive">↑ 2.1% from last month</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Average Order Value</div>
+                    <div class="kpi-value" id="kpi-avg">$13,922</div>
+                    <div class="kpi-growth growth-positive">↑ 3.4% from last month</div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">📈 Sales Trend Over Time</div>
+                    <canvas id="trendChart" height="250"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">🥇 Sales by Category</div>
+                    <canvas id="categoryChart" height="250"></canvas>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="chart-row-2">
+                <div class="chart-card">
+                    <div class="chart-title">🎯 Sales Share</div>
+                    <canvas id="donutChart" height="200"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">📊 Order Status Distribution</div>
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">💳 Sales by Payment Method</div>
+                    <canvas id="paymentChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="chart-card wide">
+                <div class="chart-title">📋 Recent Orders (Top 10)</div>
+                <table class="data-table" id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order Date</th>
+                            <th>Customer</th>
+                            <th>Category</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Profit</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data matching the generated dataset
+        const monthlySales = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            sales: [2.1, 2.4, 2.2, 2.8, 2.3, 2.5, 2.1, 2.6, 2.4, 2.2, 2.7, 2.5]
+        };
+
+        const categoryData = {
+            labels: ["Electronics", "Clothing", "Furniture", "Beauty", "Food", "Books"],
+            sales: [5.2, 4.8, 4.2, 4.5, 4.7, 4.4]
+        };
+
+        const statusData = {
+            labels: ["Completed", "Processing", "Cancelled", "Returned"],
+            values: [70, 15, 8, 7]
+        };
+
+        const paymentData = {
+            labels: ["Cash", "Credit Card", "Digital Wallet", "Bank Transfer"],
+            values: [25, 35, 28, 12]
+        };
+
+        // Gold theme colors
+        const goldColors = [
+            '#D4AF37',
+            '#F2C96E',
+            '#A67C00',
+            '#E6C76A',
+            '#B8860B',
+            '#F9E076'
+        ];
+
+        // Initialize charts
+        Chart.defaults.color = '#9CA3AF';
+        Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.1)';
+
+        // Trend Line Chart
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: monthlySales.labels,
+                datasets: [{
+                    label: 'Total Sales (Millions $)',
+                    data: monthlySales.sales,
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#F2C96E',
+                    pointBorderColor: '#1C1917',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: 'rgba(212, 175, 55, 0.05)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Category Bar Chart
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: {
+                labels: categoryData.labels,
+                datasets: [{
+                    label: 'Sales (Millions $)',
+                    data: categoryData.sales,
+                    backgroundColor: goldColors,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(212, 175, 55, 0.05)' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Donut Chart
+        new Chart(document.getElementById('donutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: categoryData.labels,
+                datasets: [{
+                    data: categoryData.sales,
+                    backgroundColor: goldColors,
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 15, font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Status Pie Chart
+        new Chart(document.getElementById('statusChart'), {
+            type: 'pie',
+            data: {
+                labels: statusData.labels,
+                datasets: [{
+                    data: statusData.values,
+                    backgroundColor: ['#84CC16', '#F97316', '#DC2626', '#9CA3AF'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 15, font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Payment Bar Chart
+        new Chart(document.getElementById('paymentChart'), {
+            type: 'bar',
+            data: {
+                labels: paymentData.labels,
+                datasets: [{
+                    label: '% of Sales',
+                    data: paymentData.values,
+                    backgroundColor: goldColors,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(212, 175, 55, 0.05)' }, max: 40 },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Populate table
+        const sampleOrders = [
+            {date: "2024-12-23", customer: "Emily Brown", category: "Electronics", product: "Laptop", qty: 2, total: 8900, profit: 3200, status: "Completed"},
+            {date: "2024-12-22", customer: "John Smith", category: "Furniture", product: "Sofa", qty: 1, total: 4500, profit: 1800, status: "Processing"},
+            {date: "2024-12-22", customer: "Sarah Johnson", category: "Clothing", product: "Jacket", qty: 3, total: 1200, profit: 480, status: "Completed"},
+            {date: "2024-12-21", customer: "Mike Davis", category: "Beauty", product: "Perfume", qty: 5, total: 750, profit: 375, status: "Completed"},
+            {date: "2024-12-21", customer: "Lisa Anderson", category: "Books", product: "Novel", qty: 10, total: 300, profit: 120, status: "Cancelled"},
+            {date: "2024-12-20", customer: "James Taylor", category: "Food", product: "Coffee", qty: 20, total: 600, profit: 240, status: "Returned"},
+            {date: "2024-12-20", customer: "Emma Thomas", category: "Electronics", product: "Headphones", qty: 4, total: 1600, profit: 640, status: "Completed"},
+            {date: "2024-12-19", customer: "Daniel Jackson", category: "Furniture", product: "Chair", qty: 6, total: 2100, profit: 840, status: "Processing"},
+            {date: "2024-12-19", customer: "Olivia White", category: "Clothing", product: "Dress", qty: 2, total: 500, profit: 200, status: "Completed"},
+            {date: "2024-12-18", customer: "David Wilson", category: "Beauty", product: "Makeup Kit", qty: 3, total: 450, profit: 180, status: "Completed"}
+        ];
+
+        const tableBody = document.getElementById('table-body');
+        const statusClass = {
+            "Completed": "status-completed",
+            "Processing": "status-processing",
+            "Cancelled": "status-cancelled",
+            "Returned": "status-returned"
+        };
+
+        sampleOrders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.date}</td>
+                <td>${order.customer}</td>
+                <td>${order.category}</td>
+                <td>${order.product}</td>
+                <td>${order.qty}</td>
+                <td>$${order.total.toLocaleString()}</td>
+                <td>$${order.profit.toLocaleString()}</td>
+                <td><span class="status-badge ${statusClass[order.status]}">${order.status}</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Simple filter interactions
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', () => {
+                alert('Filters are connected! All visuals will update based on your selection in the final Power BI file. This web preview shows the full design layout.');
+            });
+        });
+    </script>
+</body>
+</html>
