@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Generated Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', sans-serif;}
+        body {background:{{THEME_BG}};min-height:100vh;padding:30px;}
+        .container {max-width:1400px;margin:0 auto;background:{{THEME_BG}};border-radius:20px;overflow:hidden;display:flex;box-shadow:0 30px 60px rgba(0,0,0,0.4);border:1px solid {{THEME_GLOW}};}
+        .sidebar {width:90px;background:{{THEME_SIDEBAR}};padding:25px 15px;display:flex;flex-direction:column;align-items:center;gap:15px;border-right:1px solid {{THEME_GLOW}};}
+        .logo {width:40px;height:40px;border-radius:50%;background:{{THEME_PRIMARY}};margin-bottom:20px;box-shadow:0 0 15px {{THEME_GLOW}};}
+        .nav-item {width:42px;height:42px;border-radius:50%;background:{{THEME_GLOW}};margin:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:{{THEME_MUTED}};}
+        .nav-item.active {background:{{THEME_PRIMARY}};color:{{THEME_SIDEBAR}};box-shadow:0 0 15px {{THEME_GLOW}};}
+        .main {flex:1;padding:25px;}
+        .top-bar {display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+        .title {font-size:24px;font-weight:600;color:{{THEME_TEXT}};}
+        .kpi-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px;}
+        .card {background:{{THEME_CARD}};border-radius:14px;padding:20px;border:1px solid {{THEME_GLOW}};position:relative;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+        .card::before {content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{{THEME_PRIMARY}},transparent);opacity:0.6;}
+        .kpi-label {font-size:12px;color:{{THEME_MUTED}};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+        .kpi-value {font-size:32px;font-weight:700;color:{{THEME_PRIMARY}};margin-bottom:8px;}
+        .kpi-growth {font-size:12px;}
+        .charts-grid {display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;}
+        .chart-title {font-size:16px;font-weight:600;color:{{THEME_LIGHT}};margin-bottom:15px;}
+        .charts-row-2 {display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+        table {width:100%;border-collapse:collapse;margin-top:10px;}
+        th {text-align:left;padding:10px;font-size:11px;color:{{THEME_PRIMARY}};text-transform:uppercase;border-bottom:1px solid {{THEME_GLOW}};}
+        td {padding:12px 10px;font-size:12px;color:{{THEME_MUTED}};border-bottom:1px solid rgba(255,255,255,0.03);}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="logo"></div>
+        <div class="nav-item active">📊</div>
+        <div class="nav-item">📈</div>
+        <div class="nav-item">👥</div>
+        <div class="nav-item">📦</div>
+        <div class="nav-item">⚙️</div>
+    </div>
+    <div class="main">
+        <div class="top-bar">
+            <div class="title">Auto Generated Dashboard</div>
+        </div>
+        <div class="kpi-grid">
+            <div class="card">
+                <div class="kpi-label">Total Records</div>
+                <div class="kpi-value">{{KPI_TOTAL_RECORDS}}</div>
+            </div>
+            <div class="card">
+                <div class="kpi-label">{{KPI_TOTAL_LABEL}}</div>
+                <div class="kpi-value">{{KPI_TOTAL_VALUE}}</div>
+            </div>
+            <div class="card">
+                <div class="kpi-label">Growth</div>
+                <div class="kpi-value" style="color:{{KPI_GROWTH_COLOR}};">{{KPI_GROWTH}}</div>
+            </div>
+            <div class="card">
+                <div class="kpi-label">Average Value</div>
+                <div class="kpi-value">{{KPI_AVG_VALUE}}</div>
+            </div>
+        </div>
+        <div class="charts-grid">
+            <div class="card">
+                <div class="chart-title">{{TREND_TITLE}}</div>
+                <canvas id="trendChart" height="250"></canvas>
+            </div>
+            <div class="card">
+                <div class="chart-title">{{BAR_TITLE}}</div>
+                <canvas id="barChart" height="250"></canvas>
+            </div>
+        </div>
+        <div class="charts-row-2">
+            <div class="card">
+                <div class="chart-title">{{DONUT_TITLE}}</div>
+                <canvas id="donutChart" height="200"></canvas>
+            </div>
+            <div class="card">
+                <div class="chart-title">{{STATUS_TITLE}}</div>
+                <canvas id="statusChart" height="200"></canvas>
+            </div>
+            <div class="card">
+                <div class="chart-title">Statistics</div>
+                <div style="padding:20px;color:{{THEME_MUTED}};text-align:center;font-size:14px;">All metrics are automatically calculated from your data.</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="chart-title">Data Preview (Top 10 Records)</div>
+            <table>
+                <thead><tr>{{TABLE_HEADER}}</tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+const colors = ['{{THEME_PRIMARY}}','{{THEME_LIGHT}}','{{THEME_DARK}}','{{THEME_LIGHT}}cc','{{THEME_PRIMARY}}99','{{THEME_DARK}}cc'];
+Chart.defaults.color = '{{THEME_MUTED}}';
+Chart.defaults.borderColor = '{{THEME_GLOW}}';
+
+new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:{{TREND_LABELS}},datasets:[{data:{{TREND_VALUES}},borderColor:'{{THEME_PRIMARY}}',backgroundColor:'{{THEME_GLOW}}',fill:true,tension:0.4,borderWidth:3,pointBackgroundColor:'{{THEME_LIGHT}}',pointRadius:5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:'{{THEME_GLOW}}'}},x:{grid:{display:false}}}}});
+
+new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:{{BAR_LABELS}},datasets:[{data:{{BAR_VALUES}},backgroundColor:colors,borderRadius:8}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'{{THEME_GLOW}}'}},y:{grid:{display:false}}}}});
+
+new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:{{BAR_LABELS}},datasets:[{data:{{BAR_VALUES}},backgroundColor:colors,borderWidth:0}]},options:{cutout:'70%',responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}});
+
+new Chart(document.getElementById('statusChart'),{type:'pie',data:{labels:{{STATUS_LABELS}},datasets:[{data:{{STATUS_VALUES}},backgroundColor:['#22C55E','#F97316','#EF4444','#9CA3AF'],borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}});
+
+const rows = {{TABLE_ROWS}};
+const tb = document.getElementById('tableBody');
+rows.forEach(r => {const tr=document.createElement('tr');r.forEach(c=>{const td=document.createElement('td');td.textContent=c;tr.appendChild(td)});tb.appendChild(tr)});
+</script>
+</body>
+</html>
