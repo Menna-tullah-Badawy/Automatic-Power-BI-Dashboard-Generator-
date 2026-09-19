@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exact Luxury Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+        :root{
+            --g:#E8B860; --gl:#F7D794; --gd:#B88A2C;
+            --bg:#262320; --card:#2E2B28; --side:#221F1D;
+            --t:#F0D9A9; --tm:#C2B59C;
+            --gshadow: rgba(232,184,96,0.15);
+        }
+        body{background: linear-gradient(135deg,#2c2824,#1a1816);padding:30px;display:flex;justify-content:center;}
+        .wrap{width:100%;max-width:1400px;border-radius:20px;overflow:hidden;box-shadow:0 35px 80px rgba(0,0,0,.6);background:var(--bg);display:flex;border:1px solid rgba(232,184,96,.1);}
+        /* Sidebar EXACT */
+        .side{width:90px;background:var(--side);padding:25px 15px;display:flex;flex-direction:column;align-items:center;gap:20px;border-right:1px solid rgba(232,184,96,.08);}
+        .logo{width:40px;height:40px;background:var(--g);border-radius:50%;margin-bottom:30px;box-shadow:0 0 20px rgba(232,184,96,.4);}
+        .dot{width:42px;height:42px;border-radius:50%;background:rgba(232,184,96,.1);display:flex;align-items:center;justify-content:center;color:var(--tm);border:1px solid transparent;}
+        .dot.on{background:var(--g);color:#221F1D;box-shadow:0 0 15px rgba(232,184,96,.5);border-color:var(--gl);}
+        .prof{width:42px;height:42px;border-radius:50%;border:2px solid var(--g);margin-top:auto;background:linear-gradient(135deg,var(--gl),var(--gd));box-shadow:0 0 12px rgba(232,184,96,.3);}
+        /* Main Grid EXACT layout from reference */
+        .main{flex:1;padding:25px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+        .top{grid-column:span3;display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+        .ticons{display:flex;gap:15px;align-items:center;}
+        .tbtn{width:36px;height:36px;border-radius:50%;background:rgba(232,184,96,.1);border:1px solid rgba(232,184,96,.2);color:var(--g);display:flex;align-items:center;justify-content:center;}
+        .card{background:var(--card);border-radius:14px;padding:18px;border:1px solid rgba(232,184,96,.1);box-shadow:0 4px 20px rgba(0,0,0,.3);position:relative;overflow:hidden;}
+        .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);opacity:.3;}
+        .tall{grid-row:span2;}
+        .double{grid-column:span2;}
+        /* Left tall card EXACT */
+        .card-title{color:var(--g);font-size:14px;text-align:left;margin-bottom:10px;}
+        .circle{width:180px;height:180px;margin:10px auto;border-radius:50%;border:3px solid rgba(232,184,96,.1);position:relative;box-shadow:inset 0 0 30px rgba(0,0,0,.5),0 0 40px rgba(232,184,96,.1);}
+        .mark{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);}
+        .mark.t{top:-6px;left:50%;transform:translateX(-50%);}
+        .mark.r{right:-6px;top:50%;transform:translateY(-50%);}
+        .mark.b{bottom:-6px;left:50%;transform:translateX(-50%);}
+        .mark.l{left:-6px;top:50%;transform:translateY(-50%);}
+        .glow{position:absolute;width:100px;height:100px;background:radial-gradient(circle,rgba(232,184,96,.2),transparent 70%);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);}
+        .cval{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:38px;font-weight:300;color:var(--t);text-shadow:0 0 20px rgba(232,184,96,.3);}
+        .csub{position:absolute;bottom:35px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--tm);}
+        .slider{width:100%;margin-top:15px;height:6px;background:rgba(232,184,96,.15);border-radius:3px;position:relative;}
+        .sliderf{position:absolute;left:0;top:0;height:100%;width:60%;background:linear-gradient(90deg,var(--gd),var(--g));border-radius:3px;}
+        .sldot{position:absolute;right:-8px;top:-5px;width:16px;height:16px;border-radius:50%;background:var(--gl);box-shadow:0 0 10px var(--g);}
+        /* Big stat cards */
+        .bigrow{display:grid;grid-template-columns:1fr 1px 1fr;gap:15px;grid-column:span2;}
+        .bigcard{padding:20px;}
+        .biglabel{font-size:13px;color:var(--tm);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+        .bignum{font-size:42px;font-weight:300;color:var(--t);line-height:1;margin-bottom:12px;}
+        .minichart{height:40px;width:100%;background:linear-gradient(180deg,rgba(232,184,96,.2),transparent);border-radius:8px;position:relative;margin-top:10px;}
+        .dotind{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);top:10px;right:20px;}
+        .divider{background:linear-gradient(180deg,transparent,var(--g),transparent);opacity:.2;}
+        /* Bar chart */
+        .bars{display:flex;gap:10px;align-items:end;height:180px;padding:20px 0;}
+        .bar{flex:1;background:linear-gradient(180deg,var(--gl),var(--gd));border-radius:8px 8px 0 0;box-shadow:0 0 15px rgba(232,184,96,.2);}
+        .bar.t{width:4px;flex:none;background:rgba(232,184,96,.2);}
+        /* Gauge circle */
+        .gauge{width:160px;height:160px;margin:10px auto;position:relative;}
+        .gring{width:100%;height:100%;border-radius:50%;border:12px solid rgba(232,184,96,.1);position:relative;}
+        .gfill{position:absolute;width:100%;height:100%;border-radius:50%;border:12px solid transparent;border-top-color:var(--g);border-right-color:var(--g);transform:rotate(120deg);box-shadow:0 0 20px rgba(232,184,96,.2);}
+        .gval{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:32px;font-weight:300;color:var(--t);}
+        .gsub{text-align:center;font-size:12px;color:var(--tm);margin-top:-15px;}
+        .gbadge{position:absolute;top:-5px;right:-5px;width:28px;height:28px;border-radius:50%;background:var(--g);color:#221F1D;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;box-shadow:0 0 10px var(--g);}
+        /* Stats list */
+        .prog{margin-bottom:15px;}
+        .progl{display:flex;justify-content:space-between;font-size:12px;color:var(--tm);margin-bottom:6px;}
+        .progb{height:6px;background:rgba(232,184,96,.1);border-radius:3px;overflow:hidden;}
+        .progf{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:3px;box-shadow:0 0 10px rgba(232,184,96,.3);}
+        /* Table EXACT */
+        table{width:100%;border-collapse:collapse;margin-top:10px;}
+        th{text-align:left;padding:10px 8px;font-size:11px;color:var(--g);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid rgba(232,184,96,.1);}
+        td{padding:12px 8px;font-size:12px;color:var(--tm);border-bottom:1px solid rgba(232,184,96,.05);}
+        .badge{padding:4px 10px;border-radius:20px;background:rgba(232,184,96,.15);color:var(--g);font-size:10px;}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="side">
+        <div class="logo"></div>
+        <div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="prof"></div>
+    </div>
+    <div class="main">
+        <div class="top">
+            <div style="display:flex;gap:15px;align-items:center;">
+                <div class="tbtn">≡</div><div class="tbtn">👁</div><div class="tbtn">⏱</div>
+                <div style="width:200px;height:6px;background:rgba(232,184,96,.15);border-radius:3px;"></div>
+            </div>
+            <div class="ticons"><div class="tbtn">Q</div><div class="tbtn">⛶</div><div class="tbtn">🌙</div></div>
+        </div>
+
+        <!-- Left Tall Card -->
+        <div class="card tall">
+            <div class="card-title">{{LEFT_CARD_TITLE}}</div>
+            <div class="circle">
+                <div class="mark t"></div><div class="mark r"></div><div class="mark b"></div><div class="mark l"></div>
+                <div class="glow"></div>
+                <div class="cval">{{MAIN_GAUGE_VALUE}}</div>
+                <div class="csub">{{MAIN_GAUGE_SUBTEXT}}</div>
+            </div>
+            <div style="font-size:12px;color:var(--tm);text-align:left;margin-top:5px;">{{LEFT_CARD_SUBTITLE}}</div>
+            <div class="slider"><div class="sliderf"><div class="sldot"></div></div></div>
+            <div style="text-align:right;margin-top:8px;"><div class="tbtn" style="display:inline-flex;">↗</div></div>
+            <div style="margin-top:25px;text-align:left;">
+                <div class="card-title">{{STATS_LIST_TITLE}}</div>
+                <div style="margin-top:15px;">
+                    <div class="prog"><div class="progl"><span>{{STAT_1_LABEL}}</span><span>{{STAT_1_VALUE}}</span></div><div class="progb"><div class="progf" style="width:60%"></div></div></div>
+                    <div class="prog"><div class="progl"><span>{{STAT_2_LABEL}}</span><span>{{STAT_2_VALUE}}</span></div><div class="progb"><div class="progf" style="width:35%"></div></div></div>
+                    <div class="prog"><div class="progl"><span>{{STAT_3_LABEL}}</span><span>{{STAT_3_VALUE}}</span></div><div class="progb"><div class="progf" style="width:75%"></div></div></div>
+                </div>
+                <div style="margin-top:20px;">
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--tm);padding:8px 0;border-bottom:1px solid rgba(232,184,96,.05);"><span>{{LIST_1_LABEL}}</span><b style="color:var(--g);">{{LIST_1_VALUE}}</b></div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--tm);padding:8px 0;border-bottom:1px solid rgba(232,184,96,.05);"><span>{{LIST_2_LABEL}}</span><b style="color:var(--g);">{{LIST_2_VALUE}}</b></div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--tm);padding:8px 0;"><span>{{LIST_3_LABEL}}</span><b style="color:var(--g);">{{LIST_3_VALUE}}</b></div>
+                </div>
+            </div>
+            <div style="margin-top:25px;">
+                <div style="font-size:12px;color:var(--tm);margin-bottom:10px;">{{SMALL_CHART_TITLE}}</div>
+                <canvas id="minitrend" height="70"></canvas>
+            </div>
+        </div>
+
+        <!-- Big number cards -->
+        <div class="bigrow">
+            <div class="card bigcard">
+                <div class="biglabel">{{BIG_1_LABEL}}</div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div class="bignum">{{BIG_1_VALUE}}</div>
+                </div>
+                <div style="font-size:12px;color:var(--tm);margin-top:8px;">{{BIG_1_SUBTEXT}}</div>
+                <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--tm);"><span>{{BIG_1_MIN}}</span><span>{{BIG_1_MAX}}</span></div>
+                <div class="minichart" style="margin-top:15px;"><div class="dotind"></div></div>
+            </div>
+            <div class="divider"></div>
+            <div class="card bigcard">
+                <div class="biglabel">{{BIG_2_LABEL}}</div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div class="bignum">{{BIG_2_VALUE}}</div>
+                </div>
+                <div class="bars" style="height:70px;margin-top:25px;">
+                    <div class="bar" style="height:40%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:55%"></div>
+                    <div class="bar" style="height:90%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:85%"></div>
+                    <div class="bar t" style="height:40%"></div><div class="bar t" style="height:60%"></div><div class="bar t" style="height:30%"></div><div class="bar t" style="height:55%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Gauge + Progress -->
+        <div class="card">
+            <div class="card-title">{{RIGHT_GAUGE_TITLE}}</div>
+            <div class="gauge">
+                <div class="gring"><div class="gfill"></div><div class="gval">{{RIGHT_GAUGE_VALUE}}</div><div class="gbadge">N</div></div>
+            </div>
+            <div class="gsub">{{RIGHT_GAUGE_SUBTEXT}}</div>
+            <div style="margin-top:20px;display:flex;justify-content:space-around;font-size:11px;color:var(--tm);">
+                <span>{{RIGHT_MIN}}</span><span style="color:var(--g);">{{RIGHT_AVG}}</span><span>{{RIGHT_MAX}}</span>
+            </div>
+        </div>
+
+        <!-- Bottom Wide Card: Table + Line Chart -->
+        <div class="card double">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+                <div class="card-title">{{BOTTOM_SECTION_TITLE}}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div>
+                    <div style="margin-bottom:10px;display:flex;gap:20px;"><div style="color:var(--g);font-size:18px;font-weight:500;">{{BIG_LINE_VALUE}}</div><div style="color:var(--tm);font-size:12px;">{{BIG_LINE_LABEL}}</div></div>
+                </div>
+                <div><canvas id="historyline" height="120"></canvas></div>
+            </div>
+            <table>
+                <thead><tr>{{TABLE_HEADERS}}</tr></thead>
+                <tbody id="tablebody"></tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<script>
+const DATA = {{DATA_JSON}};
+Chart.defaults.color = '#C2B59C'; Chart.defaults.borderColor = 'rgba(232,184,96,0.1)';
+// Mini trend chart
+new Chart(document.getElementById('minitrend'),{type:'line',data:{labels:DATA.minitrend.labels,datasets:[{data:DATA.minitrend.values,borderColor:'#E8B860',backgroundColor:'rgba(232,184,96,0.1)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#F7D794',borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}});
+// History line
+new Chart(document.getElementById('historyline'),{type:'line',data:{labels:DATA.history.labels,datasets:[{data:DATA.history.values,borderColor:'#E8B860',backgroundColor:'rgba(232,184,96,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#F7D794',borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}});
+// Table rows
+const tb = document.getElementById('tablebody');
+DATA.table_rows.forEach(r=>{const tr=document.createElement('tr');r.forEach(c=>{const td=document.createElement('td');td.textContent=c;tr.appendChild(td)});tb.appendChild(tr)});
+</script>
+</body>
+</html>
