@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Generated Dashboard | Luxury Gold</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        :root {
+            --primary: #E8B860;
+            --light: #F7D794;
+            --dark: #B88A2C;
+            --glow: rgba(232, 184, 96, 0.15);
+            --bg-main: #262320;
+            --bg-card: #2E2B28;
+            --bg-sidebar: #221F1D;
+            --text-main: #F0D9A9;
+            --text-muted: #C2B59C;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1816 0%, #262320 100%);
+            min-height: 100vh;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: start;
+        }
+        .dashboard-window {
+            width: 100%;
+            max-width: 1600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 35px 80px rgba(0,0,0,0.6);
+            background: #262320;
+            display: flex;
+            position: relative;
+            border: 1px solid rgba(232, 184, 96, 0.15);
+        }
+        .sidebar {
+            width: 90px;
+            background: var(--bg-sidebar);
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            border-right: 1px solid rgba(232, 184, 96, 0.15);
+        }
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px var(--glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-sidebar);
+            font-weight: bold;
+        }
+        .nav-item {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(232, 184, 96, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            padding: 10px;
+        }
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--bg-sidebar);
+            box-shadow: 0 0 15px var(--glow);
+            border-color: var(--light);
+        }
+        .nav-item.active svg { stroke: var(--bg-sidebar); }
+        .nav-item:hover { background: var(--glow); color: var(--primary); }
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: 22px;
+            color: var(--light);
+            font-weight: 600;
+        }
+        .top-bar-icons { display: flex; gap: 15px; align-items: center; }
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--glow); border: 1px solid rgba(232, 184, 96, 0.15);
+            color: var(--primary); display: flex; align-items: center;
+            justify-content: center; cursor: pointer;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid rgba(232, 184, 96, 0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute; top:0; left:0; right:0; height:1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity:0.3;
+        }
+        .kpi-card::before { height: 3px; opacity: 0.8; }
+        .kpi-label {
+            font-size: 13px; color: var(--text-muted); margin-bottom:8px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .kpi-value {
+            font-size: 32px; font-weight: 700; color: var(--primary); margin-bottom: 8px;
+        }
+        .kpi-growth { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .growth-positive { color: #22C55E; }
+        .growth-negative { color: #EF4444; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap:18px;
+            margin-bottom: 18px;
+        }
+        .chart-title {
+            font-size: 16px; font-weight: 600; margin-bottom: 15px;
+            color: var(--light);
+        }
+        .chart-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        .data-table { width:100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th {
+            text-align: left; padding:10px 8px; font-size:11px; color: var(--primary);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(232, 184, 96, 0.15);
+        }
+        .data-table td {
+            padding:12px 8px; font-size:12px; color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        canvas { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-window">
+        <div class="sidebar">
+            <div class="sidebar-logo">D</div>
+            <div class="nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="page-title">Auto Generated Luxury Gold Dashboard</div>
+                <div class="top-bar-icons">
+                    <div class="icon-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                </div>
+            </div>
+            <!-- KPI Cards Auto Generated -->
+            <div class="kpi-grid" id="kpi-container"></div>
+            <!-- Charts Row 1 -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="chart-title" id="trend-title">Time Trend</div>
+                    <canvas id="trendChart" height="250"></canvas>
+                </div>
+                <div class="card">
+                    <div class="chart-title" id="bar-title">Category Distribution</div>
+                    <canvas id="categoryChart" height="250"></canvas>
+                </div>
+            </div>
+            <!-- Charts Row 2 -->
+            <div class="chart-row-2">
+                <div class="card">
+                    <div class="chart-title" id="donut-title">Share Distribution</div>
+                    <canvas id="donutChart" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <div class="chart-title" id="status-title">Status Distribution</div>
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <div class="chart-title" id="payment-title">Additional Metrics</div>
+                    <canvas id="paymentChart" height="200"></canvas>
+                </div>
+            </div>
+            <!-- Data Table -->
+            <div class="card">
+                <div class="chart-title">Data Preview (Top 20 Records)</div>
+                <table class="data-table" id="data-table"></table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto loaded data from Python
+        const dashboardData = {
+  "kpis": [
+    {
+      "label": "Total Records",
+      "value": 2000,
+      "value_formatted": "2,000",
+      "growth": null
+    },
+    {
+      "label": "Total Total Sales",
+      "value": 28254558.0,
+      "value_formatted": "$28.3M",
+      "growth": null
+    },
+    {
+      "label": "Total Sales Growth",
+      "value": -1.6091710447794518,
+      "value_formatted": "-1.6%",
+      "growth": -1.6091710447794518
+    },
+    {
+      "label": "Total Quantity",
+      "value": 11096.0,
+      "value_formatted": "$11.1K",
+      "growth": null
+    },
+    {
+      "label": "Total Unit Price",
+      "value": 5077676.0,
+      "value_formatted": "$5.1M",
+      "growth": null
+    },
+    {
+      "label": "Total Cost",
+      "value": 16776338.459999999,
+      "value_formatted": "$16.8M",
+      "growth": null
+    },
+    {
+      "label": "Average Total Sales",
+      "value": 14127.279,
+      "value_formatted": "$14.1K",
+      "growth": null
+    }
+  ],
+  "trend": {
+    "title": "Total Sales Trend Over Time",
+    "metric_label": "Total Sales",
+    "labels": [
+      "Apr 2024",
+      "Aug 2024",
+      "Dec 2024",
+      "Feb 2024",
+      "Jan 2024",
+      "Jul 2024",
+      "Jun 2024",
+      "Mar 2024",
+      "May 2024",
+      "Nov 2024",
+      "Oct 2024",
+      "Sep 2024"
+    ],
+    "values": [
+      2187951.0,
+      2560051.0,
+      2105326.0,
+      2107520.0,
+      1960936.0,
+      2378036.0,
+      2705190.0,
+      2681822.0,
+      2379670.0,
+      2191557.0,
+      2585762.0,
+      2410737.0
+    ]
+  },
+  "category_bar": {
+    "title": "Total Sales by Customer Name",
+    "value_label": "Total Sales",
+    "labels": [
+      "Emily Brown",
+      "Mike Davis",
+      "Emma Thomas",
+      "Sarah Johnson",
+      "James Taylor",
+      "Daniel Jackson",
+      "John Smith",
+      "David Wilson"
+    ],
+    "values": [
+      3077186.0,
+      3072425.0,
+      3068282.0,
+      3030085.0,
+      2929676.0,
+      2756659.0,
+      2629254.0,
+      2536956.0
+    ]
+  },
+  "donut": {
+    "title": "Total Sales Share by City",
+    "labels": [
+      "San Diego",
+      "San Antonio",
+      "Houston",
+      "Los Angeles",
+      "Phoenix",
+      "New York"
+    ],
+    "values": [
+      3943173.0,
+      3567264.0,
+      3566809.0,
+      3495407.0,
+      3479286.0,
+      3432521.0
+    ]
+  },
+  "status_pie": {
+    "title": "Records by Order Status",
+    "labels": [
+      "Cancelled",
+      "Completed",
+      "Processing",
+      "Returned"
+    ],
+    "values": [
+      139,
+      1410,
+      298,
+      153
+    ]
+  },
+  "secondary_bar": {
+    "title": "Total Sales by Category",
+    "value_label": "Total Sales",
+    "labels": [
+      "Books",
+      "Food",
+      "Beauty",
+      "Clothing",
+      "Furniture",
+      "Electronics"
+    ],
+    "values": [
+      5047034.0,
+      4993355.0,
+      4758010.0,
+      4571441.0,
+      4476591.0,
+      4408127.0
+    ]
+  },
+  "table": {
+    "columns": [
+      "Order Date",
+      "Customer Name",
+      "City",
+      "Category",
+      "Quantity",
+      "Unit Price",
+      "Total Sales"
+    ],
+    "rows": [
+      [
+        "2024-11-23",
+        "Emily Brown",
+        "Phoenix",
+        "Electronics",
+        "4.0",
+        "1193",
+        "4772"
+      ],
+      [
+        "2024-10-29",
+        "Sarah Johnson",
+        "New York",
+        "Beauty",
+        "4.0",
+        "1955",
+        "7820"
+      ],
+      [
+        "2024-11-28",
+        "Emily Brown",
+        "San Antonio",
+        "Books",
+        "8.0",
+        "4877",
+        "39016"
+      ],
+      [
+        "2024-12-23",
+        "Mike Davis",
+        "Phoenix",
+        "Beauty",
+        "4.0",
+        "2807",
+        "11228"
+      ],
+      [
+        "2024-06-25",
+        "Emma Thomas",
+        "New York",
+        "Food",
+        "9.0",
+        "1072",
+        "9648"
+      ],
+      [
+        "2024-11-17",
+        "Sarah Johnson",
+        "Houston",
+        "Food",
+        "6.0",
+        "1916",
+        "1916"
+      ],
+      [
+        "2024-02-21",
+        "Lisa Anderson",
+        "San Diego",
+        "Beauty",
+        "3.0",
+        "3082",
+        "9246"
+      ],
+      [
+        "2024-11-07",
+        "Mike Davis",
+        "Houston",
+        "Books",
+        "8.0",
+        "3158",
+        "25264"
+      ],
+      [
+        "2024-12-16",
+        "John Smith",
+        "Houston",
+        "Furniture",
+        "6.0",
+        "3336",
+        "20016"
+      ],
+      [
+        "2024-04-18",
+        "Emma Thomas",
+        "San Antonio",
+        "Books",
+        "3.0",
+        "2219",
+        "6657"
+      ],
+      [
+        "2024-10-26",
+        "Lisa Anderson",
+        "San Antonio",
+        "Beauty",
+        "4.0",
+        "1183",
+        "4732"
+      ],
+      [
+        "2024-02-26",
+        "Olivia White",
+        "San Antonio",
+        "Clothing",
+        "2.0",
+        "3202",
+        "6404"
+      ],
+      [
+        "2024-10-10",
+        "Lisa Anderson",
+        "Phoenix",
+        "Electronics",
+        "2.0",
+        "2454",
+        "4908"
+      ],
+      [
+        "2024-09-13",
+        "David Wilson",
+        "Los Angeles",
+        "Clothing",
+        "9.0",
+        "1679",
+        "15111"
+      ],
+      [
+        "2024-11-02",
+        "Sarah Johnson",
+        "New York",
+        "Furniture",
+        "6.0",
+        "2569",
+        "15414"
+      ],
+      [
+        "2024-02-13",
+        "Daniel Jackson",
+        "Los Angeles",
+        "Books",
+        "3.0",
+        "1101",
+        "3303"
+      ],
+      [
+        "2024-05-15",
+        "Emily Brown",
+        "San Antonio",
+        "Food",
+        "9.0",
+        "1697",
+        "15273"
+      ],
+      [
+        "2024-08-12",
+        "Emily Brown",
+        "Los Angeles",
+        "Food",
+        "4.0",
+        "574",
+        "2296"
+      ],
+      [
+        "2024-10-28",
+        "John Smith",
+        "Los Angeles",
+        "Clothing",
+        "4.0",
+        "602",
+        "2408"
+      ],
+      [
+        "2024-09-20",
+        "Emily Brown",
+        "San Diego",
+        "Clothing",
+        "9.0",
+        "1133",
+        "10197"
+      ]
+    ]
+  }
+};
+        const themeColors = [
+            '#E8B860', '#F7D794', '#B88A2C',
+            '#F7D794CC', '#E8B86099', '#B88A2CCC'
+        ];
+
+        Chart.defaults.color = '#C2B59C';
+        Chart.defaults.borderColor = 'rgba(232, 184, 96, 0.15)';
+
+        // 1. Render KPI Cards
+        const kpiContainer = document.getElementById('kpi-container');
+        dashboardData.kpis.forEach(kpi => {
+            const card = document.createElement('div');
+            card.className = 'card kpi-card';
+            let growthHtml = '';
+            if(kpi.growth){
+                const growthClass = kpi.growth >=0 ? 'growth-positive' : 'growth-negative';
+                growthHtml = `<div class="kpi-growth ${growthClass}">${kpi.growth > 0 ? '↑' : '↓'} ${Math.abs(kpi.growth).toFixed(1)}% vs previous period</div>`;
+            }
+            card.innerHTML = `
+                <div class="kpi-label">${kpi.label}</div>
+                <div class="kpi-value">${kpi.value_formatted}</div>
+                ${growthHtml}
+            `;
+            kpiContainer.appendChild(card);
+        });
+
+        // 2. Render Trend Line Chart
+        document.getElementById('trend-title').textContent = dashboardData.trend.title;
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: dashboardData.trend.labels,
+                datasets: [{
+                    label: dashboardData.trend.metric_label,
+                    data: dashboardData.trend.values,
+                    borderColor: '#E8B860',
+                    backgroundColor: 'rgba(232, 184, 96, 0.15)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#F7D794',
+                    pointBorderColor: '#221F1D',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: false, grid: { color: 'rgba(232, 184, 96, 0.15)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 3. Render Category Bar Chart
+        document.getElementById('bar-title').textContent = dashboardData.category_bar.title;
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: {
+                labels: dashboardData.category_bar.labels,
+                datasets: [{
+                    label: dashboardData.category_bar.value_label,
+                    data: dashboardData.category_bar.values,
+                    backgroundColor: themeColors,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(232, 184, 96, 0.15)' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 4. Render Donut Chart
+        document.getElementById('donut-title').textContent = dashboardData.donut.title;
+        new Chart(document.getElementById('donutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: dashboardData.donut.labels,
+                datasets: [{
+                    data: dashboardData.donut.values,
+                    backgroundColor: themeColors,
+                    borderWidth: 0,
+                    hoverOffset:8
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: { legend: { position: 'bottom', labels: { padding:15, font:{size:11} } } }
+            }
+        });
+
+        // 5. Render Status Pie Chart
+        document.getElementById('status-title').textContent = dashboardData.status_pie.title;
+        new Chart(document.getElementById('statusChart'), {
+            type: 'pie',
+            data: {
+                labels: dashboardData.status_pie.labels,
+                datasets: [{
+                    data: dashboardData.status_pie.values,
+                    backgroundColor: ['#22C55E', '#F97316', '#EF4444', '#9CA3AF'],
+                    borderWidth: 0,
+                    hoverOffset:8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { padding:15, font:{size:11} } } }
+            }
+        });
+
+        // 6. Render Bar Chart for additional field
+        document.getElementById('payment-title').textContent = dashboardData.secondary_bar.title;
+        new Chart(document.getElementById('paymentChart'), {
+            type: 'bar',
+            data: {
+                labels: dashboardData.secondary_bar.labels,
+                datasets: [{
+                    label: dashboardData.secondary_bar.value_label,
+                    data: dashboardData.secondary_bar.values,
+                    backgroundColor: themeColors,
+                    borderRadius:8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display:false } },
+                scales: {
+                    y: { grid: { color: 'rgba(232, 184, 96, 0.15)' } },
+                    x: { grid: { display:false } }
+                }
+            }
+        });
+
+        // 7. Render Data Table
+        const table = document.getElementById('data-table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        
+        // Header
+        const headerRow = document.createElement('tr');
+        dashboardData.table.columns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Rows
+        dashboardData.table.rows.forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+    </script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Generated Dashboard | {{THEME_NAME}}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        :root {
+            --primary: {{PRIMARY}};
+            --light: {{LIGHT}};
+            --dark: {{DARK}};
+            --glow: {{GLOW}};
+            --bg-main: {{BG_MAIN}};
+            --bg-card: {{BG_CARD}};
+            --bg-sidebar: {{BG_SIDEBAR}};
+            --text-main: {{TEXT_MAIN}};
+            --text-muted: {{TEXT_MUTED}};
+        }
+        body {
+            background: linear-gradient(135deg, {{BG_MAIN_DARK}} 0%, {{BG_MAIN}} 100%);
+            min-height: 100vh;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: start;
+        }
+        .dashboard-window {
+            width: 100%;
+            max-width: 1600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 35px 80px rgba(0,0,0,0.6);
+            background: {{BG_MAIN}};
+            display: flex;
+            position: relative;
+            border: 1px solid {{GLOW}};
+        }
+        .sidebar {
+            width: 90px;
+            background: var(--bg-sidebar);
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            border-right: 1px solid {{GLOW}};
+        }
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px var(--glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-sidebar);
+            font-weight: bold;
+        }
+        .nav-item {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(232, 184, 96, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            padding: 10px;
+        }
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--bg-sidebar);
+            box-shadow: 0 0 15px var(--glow);
+            border-color: var(--light);
+        }
+        .nav-item.active svg { stroke: var(--bg-sidebar); }
+        .nav-item:hover { background: var(--glow); color: var(--primary); }
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: 22px;
+            color: var(--light);
+            font-weight: 600;
+        }
+        .top-bar-icons { display: flex; gap: 15px; align-items: center; }
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--glow); border: 1px solid {{GLOW}};
+            color: var(--primary); display: flex; align-items: center;
+            justify-content: center; cursor: pointer;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid {{GLOW}};
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute; top:0; left:0; right:0; height:1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity:0.3;
+        }
+        .kpi-card::before { height: 3px; opacity: 0.8; }
+        .kpi-label {
+            font-size: 13px; color: var(--text-muted); margin-bottom:8px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .kpi-value {
+            font-size: 32px; font-weight: 700; color: var(--primary); margin-bottom: 8px;
+        }
+        .kpi-growth { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .growth-positive { color: #22C55E; }
+        .growth-negative { color: #EF4444; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap:18px;
+            margin-bottom: 18px;
+        }
+        .chart-title {
+            font-size: 16px; font-weight: 600; margin-bottom: 15px;
+            color: var(--light);
+        }
+        .chart-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        .data-table { width:100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th {
+            text-align: left; padding:10px 8px; font-size:11px; color: var(--primary);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 1px solid {{GLOW}};
+        }
+        .data-table td {
+            padding:12px 8px; font-size:12px; color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        canvas { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-window">
+        <div class="sidebar">
+            <div class="sidebar-logo">D</div>
+            <div class="nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="page-title">{{DASHBOARD_TITLE}}</div>
+                <div class="top-bar-icons">
+                    <div class="icon-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                </div>
+            </div>
+            <!-- KPI Cards Auto Generated -->
+            <div class="kpi-grid" id="kpi-container"></div>
+            <!-- Charts Row 1 -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="chart-title" id="trend-title">Time Trend</div>
+                    <canvas id="trendChart" height="250"></canvas>
+                </div>
+                <div class="card">
+                    <div class="chart-title" id="bar-title">Category Distribution</div>
+                    <canvas id="categoryChart" height="250"></canvas>
+                </div>
+            </div>
+            <!-- Charts Row 2 -->
+            <div class="chart-row-2">
+                <div class="card">
+                    <div class="chart-title" id="donut-title">Share Distribution</div>
+                    <canvas id="donutChart" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <div class="chart-title" id="status-title">Status Distribution</div>
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <div class="chart-title" id="payment-title">Additional Metrics</div>
+                    <canvas id="paymentChart" height="200"></canvas>
+                </div>
+            </div>
+            <!-- Data Table -->
+            <div class="card">
+                <div class="chart-title">Data Preview (Top 20 Records)</div>
+                <table class="data-table" id="data-table"></table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto loaded data from Python
+        const dashboardData = {{DASHBOARD_DATA}};
+        const themeColors = [
+            '{{PRIMARY}}', '{{LIGHT}}', '{{DARK}}',
+            '{{LIGHT}}CC', '{{PRIMARY}}99', '{{DARK}}CC'
+        ];
+
+        Chart.defaults.color = '{{TEXT_MUTED}}';
+        Chart.defaults.borderColor = '{{GLOW}}';
+
+        // 1. Render KPI Cards
+        const kpiContainer = document.getElementById('kpi-container');
+        dashboardData.kpis.forEach(kpi => {
+            const card = document.createElement('div');
+            card.className = 'card kpi-card';
+            let growthHtml = '';
+            if(kpi.growth){
+                const growthClass = kpi.growth >=0 ? 'growth-positive' : 'growth-negative';
+                growthHtml = `<div class="kpi-growth ${growthClass}">${kpi.growth > 0 ? '↑' : '↓'} ${Math.abs(kpi.growth).toFixed(1)}% vs previous period</div>`;
+            }
+            card.innerHTML = `
+                <div class="kpi-label">${kpi.label}</div>
+                <div class="kpi-value">${kpi.value_formatted}</div>
+                ${growthHtml}
+            `;
+            kpiContainer.appendChild(card);
+        });
+
+        // 2. Render Trend Line Chart
+        document.getElementById('trend-title').textContent = dashboardData.trend.title;
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: dashboardData.trend.labels,
+                datasets: [{
+                    label: dashboardData.trend.metric_label,
+                    data: dashboardData.trend.values,
+                    borderColor: '{{PRIMARY}}',
+                    backgroundColor: '{{GLOW}}',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '{{LIGHT}}',
+                    pointBorderColor: '{{BG_SIDEBAR}}',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: false, grid: { color: '{{GLOW}}' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 3. Render Category Bar Chart
+        document.getElementById('bar-title').textContent = dashboardData.category_bar.title;
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: {
+                labels: dashboardData.category_bar.labels,
+                datasets: [{
+                    label: dashboardData.category_bar.value_label,
+                    data: dashboardData.category_bar.values,
+                    backgroundColor: themeColors,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '{{GLOW}}' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 4. Render Donut Chart
+        document.getElementById('donut-title').textContent = dashboardData.donut.title;
+        new Chart(document.getElementById('donutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: dashboardData.donut.labels,
+                datasets: [{
+                    data: dashboardData.donut.values,
+                    backgroundColor: themeColors,
+                    borderWidth: 0,
+                    hoverOffset:8
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: { legend: { position: 'bottom', labels: { padding:15, font:{size:11} } } }
+            }
+        });
+
+        // 5. Render Status Pie Chart
+        document.getElementById('status-title').textContent = dashboardData.status_pie.title;
+        new Chart(document.getElementById('statusChart'), {
+            type: 'pie',
+            data: {
+                labels: dashboardData.status_pie.labels,
+                datasets: [{
+                    data: dashboardData.status_pie.values,
+                    backgroundColor: ['#22C55E', '#F97316', '#EF4444', '#9CA3AF'],
+                    borderWidth: 0,
+                    hoverOffset:8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { padding:15, font:{size:11} } } }
+            }
+        });
+
+        // 6. Render Bar Chart for additional field
+        document.getElementById('payment-title').textContent = dashboardData.secondary_bar.title;
+        new Chart(document.getElementById('paymentChart'), {
+            type: 'bar',
+            data: {
+                labels: dashboardData.secondary_bar.labels,
+                datasets: [{
+                    label: dashboardData.secondary_bar.value_label,
+                    data: dashboardData.secondary_bar.values,
+                    backgroundColor: themeColors,
+                    borderRadius:8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display:false } },
+                scales: {
+                    y: { grid: { color: '{{GLOW}}' } },
+                    x: { grid: { display:false } }
+                }
+            }
+        });
+
+        // 7. Render Data Table
+        const table = document.getElementById('data-table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        
+        // Header
+        const headerRow = document.createElement('tr');
+        dashboardData.table.columns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Rows
+        dashboardData.table.rows.forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+    </script>
+</body>
+</html>
